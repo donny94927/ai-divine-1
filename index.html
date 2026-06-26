@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>🔮 AI 神祕學塔羅占卜</title>
+    <style>
+        body { background-color: #1a122c; color: #fff; font-family: sans-serif; text-align: center; padding: 50px; }
+        .card { width: 150px; height: 250px; background: linear-gradient(45deg, #442c75, #c8a2c8); border-radius: 10px; border: 2px solid #ffd700; margin: 20px auto; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; transition: 0.3s; }
+        .card:hover { transform: scale(1.05); box-shadow: 0 0 15px #ffd700; }
+        input, button { padding: 10px; font-size: 16px; border-radius: 5px; border: none; margin: 5px; }
+        button { background-color: #ffd700; cursor: pointer; font-weight: bold; }
+        #result { max-width: 600px; margin: 30px auto; line-height: 1.6; font-size: 18px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <h1>🔮 AI 宇宙塔羅占卜大師</h1>
+    <p>請在下方輸入你想請教的問題，並點擊下方的塔羅牌抽牌：</p>
+    
+    <input type="text" id="question" placeholder="例如：愛情、學業、工作、運勢、財運、占卜" style="width: 300px;">
+    
+    <div class="card" onclick="startDivination()">🎴<br>點擊抽牌</div>
+    
+    <div id="result" style="display:none;">🧙 大師正在冥想、感應宇宙能量中...</div>
+
+    <script>
+        async function startDivination() {
+            const question = document.getElementById('question').value;
+            if (!question) { alert('請先輸入你的問題！'); return; }
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerText = '🧙 大師正在感應宇宙能量，請稍候...';
+            
+            try {
+                // 發送請求給我們的 Python 後端 (伺服器)
+                const response = await fetch('https://tarot-backend-4b8z.onrender.com/api/divine', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question: question })
+                });
+                const data = await response.json();
+                
+                // 將 AI 解牌結果渲染到網頁上
+                resultDiv.innerHTML = `<h3>🔮 抽到：${data.card}</h3><p>${data.analysis.replace(/\n/g, '<br>')}</p>`;
+            } catch (error) {
+                resultDiv.innerText = '❌ 宇宙訊號不良，請確認後端 Python 是否有啟動。';
+            }
+        }
+    </script>
+</body>
+</html>
